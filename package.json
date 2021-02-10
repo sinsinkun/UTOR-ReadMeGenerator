@@ -1,0 +1,22 @@
+{
+  "name": "readme-generator",
+  "version": "0.0.1",
+  "description": "Uses a variety of node packages to auto-generate readme files",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sinsinkun/UTOR-ReadMeGenerator.git"
+  },
+  "author": "Chang Xiao",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sinsinkun/UTOR-ReadMeGenerator/issues"
+  },
+  "homepage": "https://github.com/sinsinkun/UTOR-ReadMeGenerator#readme",
+  "dependencies": {
+    "inquirer": "^7.3.3"
+  }
+}
