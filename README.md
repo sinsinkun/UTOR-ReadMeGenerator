@@ -9,9 +9,6 @@ This is a read me generator built using inquirer to simplify the process of crea
 * [Installation](#installation)
 * [Usage](#usage)
 * [License](#license)
-* [Contributors](#contributors)
-* [Tests](#tests)
-* [Questions](#questions)
 
 ## Installation
 This program requires node, and the inquirer package found on npm.
