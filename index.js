@@ -2,10 +2,6 @@ const fs = require('fs');
 const inquirer = require('inquirer');
 const { mainModule } = require('process');
 
-/* README.md is generated with the title of my project and sections entitled 
-Description, Table of Contents, Installation, 
-Usage, License, Contributing, Tests, and Questions */
-
 main();
 
 async function main() {
@@ -33,7 +29,7 @@ async function main() {
         {
             type: 'checkbox',
             message: 'What sections should be included?',
-            choices: ['Installation', 'Usage', 'License', 'Contributing', 'Tests', 'Questions'],
+            choices: ['Installation', 'Usage', 'License', 'Contributors', 'Tests', 'Questions'],
             name: 'contentArr'
         }
     ])
@@ -96,22 +92,41 @@ async function main() {
                 output += 'GNU GPLv3 License: Copyright (C) 2021 JingChang Xiao \n\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. \n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the [GNU General Public License](https://www.gnu.org/licenses/) for more details.\n';
         }
     }
+    // add contributors section
+    if (optionalArr.includes('Contributors')) {
+        output += '\n\# Contributors\n';
 
-    /*{
-        type: 'input',
-        message: 'Please enter what to include in the \'Contributing\' Section: ',
-        name: 'contribute'
-    },
-    /*{
-        type: 'input',
-        message: 'Please enter what to include in the \'Tests\' Section: ',
-        name: 'tests'
-    },
-    /*{
-        type: 'input',
-        message: 'Please enter what to include in the \'Questions\' Section: ',
-        name: 'questions'
-    } */
+        let use = await inquirer.prompt([{
+            type: 'input',
+            message: 'Please enter contributor names, separated by \',\': ',
+            name: 'in'
+        }]);
+        let names = use.in.split(',');
+        names.forEach(name => { name = name.trim(); output += `\* ${name}\n`; });
+    }
+    // add tests section
+    if (optionalArr.includes('Tests')) {
+        output += '\n\# Tests\n';
+
+        let tests = await inquirer.prompt([{
+            type: 'input',
+            message: 'Please enter what message to include in the \'Tests\' Section: ',
+            name: 'in'
+        }]);
+        output += `${tests.in}\n`;
+    }
+    // add questions section
+    if (optionalArr.includes('Questions')) {
+        output += '\n\# Frequently Asked Questions\n';
+
+        let faq = await inquirer.prompt([{
+            type: 'input',
+            message: 'Please enter what message to include in the \'FAQ\' Section: ',
+            name: 'in'
+        }]);
+        output += `${faq.in}\n`;
+    }
+
     fs.writeFileSync('./output.md', output);
     console.log('new readme created');
 }
