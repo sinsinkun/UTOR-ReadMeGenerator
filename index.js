@@ -1,11 +1,7 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
-const { mainModule } = require('process');
-
-main();
 
 async function main() {
-
     let output = '';
     let optionalArr = [];
     // prompt user for mandatory inputs
@@ -21,6 +17,10 @@ async function main() {
             name: 'desc'
         }
     ])
+    if (header.title.length < 1 || header.desc.length < 1) {
+        console.log('Title and description must not be empty. Exiting');
+        return;
+    }
     output += `\# ${header.title}\n`;
     output += `\n\#\# Description\n${header.desc}\n`;
 
@@ -30,10 +30,10 @@ async function main() {
             type: 'checkbox',
             message: 'What sections should be included?',
             choices: ['Installation', 'Usage', 'License', 'Contributors', 'Tests', 'Questions'],
-            name: 'contentArr'
+            name: 'arr'
         }
     ])
-    optionalArr = tbContents.contentArr;
+    optionalArr = tbContents.arr;
     if (optionalArr.length > 0) {
         output += '\n\#\# Table of Contents\n';
         for (let i = 0; i < optionalArr.length; i++) {
@@ -45,37 +45,51 @@ async function main() {
     if (optionalArr.includes('Installation')) {
         output += '\n\# Installation\n';
 
-        let inst = await inquirer.prompt([{
+        let response = await inquirer.prompt([{
             type: 'input',
             message: 'Please enter what to include in the \'Installation\' Section: ',
             name: 'in'
         }]);
-        output += `${inst.in}\n`;
+        output += `${response.in}\n`;
     }
 
     // add usage section
     if (optionalArr.includes('Usage')) {
         output += '\n\# Usage\n';
 
-        let use = await inquirer.prompt([{
-            type: 'input',
-            message: 'Please enter what message to include in the \'Usage\' Section: ',
-            name: 'in'
-        }]);
-        output += `${use.in}\n`;
+        let response = await inquirer.prompt([
+            {
+                type: 'input',
+                message: 'Please enter what instructions to include in the \'Usage\' Section \n(Leave blank to skip): ',
+                name: 'msg'
+            },
+            {
+                type: 'input',
+                message: 'If you would like to include a screenshot, please enter the link \n(Leave blank to skip, or use \',\' to separate multiple files): ',
+                name: 'img'
+            }
+        ]);
+        if (response.msg.length > 0) output += `${response.msg}\n`;
+        if (response.img.length > 0) {
+            let imgArr = response.img.split(',');
+            for (let i=0; i<imgArr.length; i++) {
+                imgArr[i] = imgArr[i].trim();
+                output += `[Screenshot ${i}](${imgArr[i]})\n`;
+            }
+        }
     }
 
     // add licensing section
     if (optionalArr.includes('License')) {
         output += '\n\# License\n';
 
-        let use = await inquirer.prompt([{
+        let response = await inquirer.prompt([{
             type: 'list',
             message: 'Please choose a \'License\': ',
             choices: ['ISC', 'MIT', 'Apache 2.0', 'MPL 2.0', 'GNU GPLv3'],
             name: 'in'
         }]);
-        switch (use.in) {
+        switch (response.in) {
             case 'ISC':
                 output += 'ISC License: Copyright (C) 2021 JingChang Xiao \n\nPermission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies. \n\nTHE SOFTWARE IS PROVIDED \"AS IS\" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.\n';
                 break;
@@ -96,37 +110,39 @@ async function main() {
     if (optionalArr.includes('Contributors')) {
         output += '\n\# Contributors\n';
 
-        let use = await inquirer.prompt([{
+        let response = await inquirer.prompt([{
             type: 'input',
             message: 'Please enter contributor names, separated by \',\': ',
             name: 'in'
         }]);
-        let names = use.in.split(',');
+        let names = response.in.split(',');
         names.forEach(name => { name = name.trim(); output += `\* ${name}\n`; });
     }
     // add tests section
     if (optionalArr.includes('Tests')) {
         output += '\n\# Tests\n';
 
-        let tests = await inquirer.prompt([{
+        let response = await inquirer.prompt([{
             type: 'input',
             message: 'Please enter what message to include in the \'Tests\' Section: ',
             name: 'in'
         }]);
-        output += `${tests.in}\n`;
+        output += `${response.in}\n`;
     }
     // add questions section
     if (optionalArr.includes('Questions')) {
         output += '\n\# Frequently Asked Questions\n';
 
-        let faq = await inquirer.prompt([{
+        let response = await inquirer.prompt([{
             type: 'input',
             message: 'Please enter what message to include in the \'FAQ\' Section: ',
             name: 'in'
         }]);
-        output += `${faq.in}\n`;
+        output += `${response.in}\n`;
     }
 
     fs.writeFileSync('./output.md', output);
     console.log('new readme created');
 }
+
+main();
