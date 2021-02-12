@@ -136,7 +136,7 @@ async function main() {
         let response = await inquirer.prompt([
             {
                 type: 'input',
-                message: 'Please enter your github profile link: ',
+                message: 'Please enter your github username: ',
                 name: 'github'
             },
             {
@@ -150,7 +150,7 @@ async function main() {
                 name: 'info'
             }
         ]);
-        output += `\* Github: [${response.github}](${response.github})\n\* Email: [${response.email}](${response.email})\n\n${response.info}\n`;
+        output += `\* Github: [https://github.com/${response.github}](https://github.com/${response.github})\n\* Email: [${response.email}](${response.email})\n\n${response.info}\n`;
     }
 
     fs.writeFileSync('./README.md', output);
